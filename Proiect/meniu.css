@@ -1,0 +1,52 @@
+.meniu
+{
+	background-color: #DAE1E7;
+	list-style-type: none;
+	display:block;
+	margin:0;
+	padding:0;
+}
+.meniu>li
+{
+	display:block;
+	height:1.2rem;
+	line-height:1.2rem;
+	list-style-type:none;
+	padding:0;
+	margin:0;
+	vertical-align:top;
+	cursor: pointer;
+}
+.meniu>li
+{
+	/*display: block;*/
+	float:left;
+	width:33.3%;
+}
+.meniu>li>a
+{
+	display:block;
+	/*height:100%;*/
+	text-decoration:none;
+	color: black;
+	text-align:center;
+	font-size:16px;
+}
+.meniu li
+{
+	background-color: #DAE1E7;
+}
+.meniu>li:hover,.meniu>li>a:hover
+{
+	background-color:  #3D4852;
+    color: white;
+	transform: scale(1.1);
+}
+#client
+{
+	display:none;
+}
+#manager
+{
+	display:none;
+}
