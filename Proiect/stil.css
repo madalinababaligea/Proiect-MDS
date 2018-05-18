@@ -69,9 +69,9 @@ h1
   color: #4CAF50;
   text-decoration: none;
 }
-.form .register-form {
+/*.form .register-form {
   display: none;
-}
+}*/
 .container {
   position: relative;
   z-index: 1;
@@ -114,4 +114,21 @@ body {
   font-family: "Roboto", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;      
+}
+.error{
+  width: 92%;
+  margin: 0px auto;
+  padding: 10px;
+  border: 1px solid #a94442;
+  color: #a94442;
+  background: #f2dede;
+  border-radius: 5px;
+  text-align: left;
+}
+
+.succes{
+  color: #3c763d;
+  background: #dff0d8;
+  border: 1px solid #3c763d;
+  margin-bottom: 20px;
 }
