@@ -71,7 +71,8 @@ public class FirClient implements Runnable{
 				instanta.veziFeedback();
 			}
 			else if(mesaj.equals("Vezi raport") &&!instanta.clientDeconectat()) {
-				instanta.veziRaport();
+				String data=instanta.read();
+				instanta.veziRaport(data);
 			}
 		}
 	}

@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import clase.Client;
 import clase.Feedback;
 import clase.Sesiune;
+import clase.Zone;
 
 public class Controller {
 	private ControllerBD controllerBD;
@@ -26,6 +27,9 @@ public class Controller {
 	public void seteazaMesaj(ObjectInputStream in, ObjectOutputStream out) {
 		input=in;
 		output=out;
+	}
+	public boolean clientDeconectat() {
+		return clientDeconectat;
 	}
 	
 	public String read() {
@@ -138,10 +142,21 @@ public class Controller {
 			e.printStackTrace();
 		}
 	}
-	public void veziRaport() {
-		//primesc data
-		//intorc un array cu numarele de clienti pe fiecare zona pentru data primita
-		//trimit stringurile din array
+	public void veziRaport(String data) {
+		try {
+			ArrayList<Zone> z=controllerBD.veziRaport(data);
+			for(Zone i:z) {
+				output.writeObject(i.getZonaA());
+				output.writeObject(i.getZonaB());
+				output.writeObject(i.getZonaC());
+				output.writeObject(i.getZonaD());
+			}
+			String terminator=new String("%");
+			output.writeObject(terminator);
+		}catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	

@@ -14,6 +14,7 @@ import java.util.Date;
 import clase.Client;
 import clase.Feedback;
 import clase.Sesiune;
+import clase.Zone;
 
 //aici sunt prelucrari pentru diferite cereri
 
@@ -41,8 +42,8 @@ public class ConexiuneBD {
     }
 	
 	public String selectUser(String username,String parola,Sesiune ses) {
-		try(PreparedStatement ps=con.prepareStatement("SELECT * FROM clienti WHERE username=? AND password=?");
-			PreparedStatement psS=con.prepareStatement("SELECT * FROM manageri WHERE username=? AND password=?");){
+		try(PreparedStatement ps=con.prepareStatement("SELECT * FROM clienti2 WHERE username=? AND password=?");
+			PreparedStatement psS=con.prepareStatement("SELECT * FROM manageri2 WHERE username=? AND password=?");){
 			//System.out.println("verifica user "+username);
 			ps.setString(1, username);
 			ps.setString(2, parola);
@@ -77,7 +78,7 @@ public class ConexiuneBD {
 		return null;
 	}
 	public boolean addClient(Client c) {
-		try(PreparedStatement ps=con.prepareStatement("SELECT * FROM clienti WHERE username=?")) {
+		try(PreparedStatement ps=con.prepareStatement("SELECT * FROM clienti2 WHERE username=?")) {
 			String username=c.getUsername();
 			String nume=c.getNume();
 			String prenume=c.getPrenume();
@@ -86,14 +87,14 @@ public class ConexiuneBD {
 			ResultSet rs=ps.executeQuery();
 			if(rs.next())
 				return false; //clientul exista deja si nu poate fi adaugat
-			PreparedStatement psU=con.prepareStatement("INSERT INTO clienti VALUES(?,?,?,?,?)");
-			PreparedStatement psMax=con.prepareStatement("SELECT max(client_id) FROM clienti");
+			PreparedStatement psU=con.prepareStatement("INSERT INTO clienti2 VALUES(?,?,?,?,?)");
+			PreparedStatement psMax=con.prepareStatement("SELECT max(client_id) FROM clienti2");
 			ResultSet rsMax=psMax.executeQuery();
 			int id=-1;
 			boolean gasit=false;
 			if(rsMax.next())
 			{
-				id=rsMax.getInt("client_id")+1;
+				id=rsMax.getInt(1)+1;
 				gasit=true;
 			}
 			if(gasit==false)
@@ -112,7 +113,7 @@ public class ConexiuneBD {
 		return false;
 	}
 	public boolean editeazaClient(Client c,Sesiune ses) {
-		try(PreparedStatement ps=con.prepareStatement("UPDATE clienti SET username=?, nume=?, password=?, prenume=? WHERE id_client=?")) {
+		try(PreparedStatement ps=con.prepareStatement("UPDATE clienti2 SET username=?, nume=?, password=?, prenume=? WHERE id_client=?")) {
 			int id=ses.getInstance().getId();
 			ps.setInt(5, id);
 			String username=c.getUsername();
@@ -132,8 +133,11 @@ public class ConexiuneBD {
 		return false;
 	}	
 	public int locuriLibere(String data) {
-		try (PreparedStatement ps=con.prepareStatement("SELECT count(nr_persoane) FROM rezervari WHERE data=?")){
-			ps.setString(1, data);
+		try (PreparedStatement ps=con.prepareStatement("SELECT sum(nr_persoane) FROM rezervari2 WHERE data=?")){
+			DateFormat format=new SimpleDateFormat("yyyy-mm-dd");
+			Date date=format.parse(data);
+			java.sql.Date sql=new java.sql.Date(date.getTime());
+			ps.setDate(1, sql);
 			ResultSet rs=ps.executeQuery();
 			int locuri=-1;
 			if(rs.next())
@@ -143,12 +147,15 @@ public class ConexiuneBD {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		return -1;
 	}
 	public boolean adaugaRezervare(String data, String zonaAleasa, String nrPers,Sesiune ses) {
-		try (PreparedStatement ps=con.prepareStatement("INSERT INTO rezervari VALUES (?,?,?,?,?,?,?,?)");
-			PreparedStatement psMax=con.prepareStatement("SELECT max(rezervare_id) FROM rezervari")){
+		try (PreparedStatement ps=con.prepareStatement("INSERT INTO rezervari2 VALUES (?,?,?,?,?,?,?)");
+			PreparedStatement psMax=con.prepareStatement("SELECT max(rezervare_id) FROM rezervari2")){
 			ResultSet rsMax=psMax.executeQuery();
 			int id=-1;
 			int nrPer=Integer.parseInt(nrPers);
@@ -160,36 +167,28 @@ public class ConexiuneBD {
 			DateFormat format=new SimpleDateFormat("yyyy-mm-dd");
 			Date date=format.parse(data);
 			java.sql.Date sql=new java.sql.Date(date.getTime());
+			System.out.println("Rezrvare in con bd "+sql);
 			ps.setDate(2, sql);
-			if(zonaAleasa.equals("zona a")) {
+			if(zonaAleasa.equals("Zona A")) {
 				ps.setInt(3, 1);
 				ps.setInt(4, 0);
 				ps.setInt(5, 0);
-				ps.setInt(6, 0);
 			}
 			else
-				if(zonaAleasa.equals("zona b")){
+				if(zonaAleasa.equals("Zona B")){
 					ps.setInt(3, 1);
 					ps.setInt(4, 1);
 					ps.setInt(5, 0);
-					ps.setInt(6, 0);
 				}
 				else
-					if(zonaAleasa.equals("zona c")) {
+					if(zonaAleasa.equals("Zona C")) {
 						ps.setInt(3, 1);
 						ps.setInt(4, 1);
 						ps.setInt(5, 1);
-						ps.setInt(6, 0);
 					}
-					else if (zonaAleasa.equals("zona d")) {
-						ps.setInt(3, 1);
-						ps.setInt(4, 1);
-						ps.setInt(5, 1);
-						ps.setInt(6, 1);
-					}
-			ps.setInt(7, nrPer);
+			ps.setInt(6, nrPer);
 			int idC=ses.getInstance().getId();
-			ps.setInt(8, idC);
+			ps.setInt(7, idC);
 			int row=ps.executeUpdate();
 			return true;
 		} catch (SQLException e) {
@@ -201,9 +200,49 @@ public class ConexiuneBD {
 		}
 		return false;
 	}
+	public ArrayList<Zone> veziRaport(String data){
+		try(PreparedStatement ps=con.prepareStatement("SELECT * FROM rezervari WHERE data=?")){
+			DateFormat format=new SimpleDateFormat("yyyy-mm-dd");
+			Date date=format.parse(data);
+			java.sql.Date sql=new java.sql.Date(date.getTime());
+			ps.setDate(1, sql);
+			int zonaA=0,zonaB=0,zonaC=0,zonaD=0;
+			ResultSet rs=ps.executeQuery();
+			while(rs.next()) {
+				int a=rs.getInt(3);
+				int b=rs.getInt(4);
+				int c=rs.getInt(5);
+				int nrPers=rs.getInt(7);
+				if(b==0 && c==0 && a==1)
+					zonaA+=nrPers;
+				else
+					if(c==0 && b==1 && a==1) {
+						zonaA+=nrPers;
+						zonaB+=nrPers;
+					}
+					else
+						if(c==1 && b==1 && a==1) {
+							zonaA+=nrPers;
+							zonaB+=nrPers;
+							zonaC+=nrPers;
+						}
+			}
+			ArrayList<Zone> z=new ArrayList<Zone>();
+			Zone z1=new Zone(zonaA,zonaB,zonaC,zonaD);
+			z.add(z1);
+			return z;
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		return null;
+	}
 	public void adaugaFeedback(String feedback, Sesiune ses) {
-		try (PreparedStatement ps=con.prepareStatement("INSERT INTO feedback VALUES(?,?,?)");
-			 PreparedStatement psMax=con.prepareStatement("SELECT max(feedback_id) FROM feedback")){
+		try (PreparedStatement ps=con.prepareStatement("INSERT INTO feedback2 VALUES(?,?,?)");
+			 PreparedStatement psMax=con.prepareStatement("SELECT max(feedback_id) FROM feedback2")){
 			int idC=ses.getInstance().getId();
 			ResultSet rsMax=psMax.executeQuery();
 			int id=-1;

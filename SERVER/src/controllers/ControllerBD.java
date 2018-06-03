@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import clase.Client;
 import clase.Feedback;
 import clase.Sesiune;
+import clase.Zone;
 import conexiuneBD.ConexiuneBD;
 
 
@@ -41,7 +42,10 @@ public class ControllerBD {
 	public ArrayList<Feedback> veziFeedback() {
 		return conexiuneBD.veziFeedback();
 	}
-	
+	public ArrayList<Zone> veziRaport(String data){
+		return conexiuneBD.veziRaport(data);
+	}
+
 	public void close() {
 		conexiuneBD.close();
 	}
