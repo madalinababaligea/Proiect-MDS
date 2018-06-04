@@ -64,6 +64,7 @@ public class FirClient implements Runnable{
 				}
 			}
 			else if(mesaj.equals("Adauga feedback") && !instanta.clientDeconectat()) {
+				System.out.println("A apasat feedback");
 				String feedback=instanta.read();
 				instanta.adaugaFeedback(feedback, ses);
 			}
@@ -73,6 +74,10 @@ public class FirClient implements Runnable{
 			else if(mesaj.equals("Vezi raport") &&!instanta.clientDeconectat()) {
 				String data=instanta.read();
 				instanta.veziRaport(data);
+			}
+			else if(mesaj.equals("Editeaza") && !instanta.clientDeconectat()){
+				System.out.println("Am apasat editeaza");
+				instanta.trimiteDate();
 			}
 		}
 	}

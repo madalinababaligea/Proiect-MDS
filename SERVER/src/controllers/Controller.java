@@ -87,13 +87,9 @@ public class Controller {
 		}
 	}
 	public void editeazaClient(Client c, Sesiune ses) {
-		try {
-			boolean add=controllerBD.editeazaClient(c,ses); //add e true sau false, daca e false, clientul nu poate fi adaugat si se afiseaza o fereastra de dialog
-			output.writeObject(add);
-		}
-		catch(IOException e) {
-			e.printStackTrace();
-		}
+		//boolean add=
+		controllerBD.editeazaClient(c,ses); //add e true sau false, daca e false, clientul nu poate fi adaugat si se afiseaza o fereastra de dialog
+		//output.writeObject(add);
 	}
 	
 	public boolean locuriLibere(String data) {
@@ -132,8 +128,9 @@ public class Controller {
 			ArrayList<Feedback> fdb=controllerBD.veziFeedback();
 			for(Feedback i:fdb)
 			{
-				output.writeObject(i.getIdClient());
+				System.out.println("1 "+i.getFeedback()+" "+i.getIdClient());
 				output.writeObject(i.getFeedback());
+				output.writeObject(i.getIdClient());
 			}
 			String terminator=new String("%");
 			output.writeObject(terminator);
@@ -144,22 +141,34 @@ public class Controller {
 	}
 	public void veziRaport(String data) {
 		try {
-			ArrayList<Zone> z=controllerBD.veziRaport(data);
-			for(Zone i:z) {
-				output.writeObject(i.getZonaA());
-				output.writeObject(i.getZonaB());
-				output.writeObject(i.getZonaC());
-				output.writeObject(i.getZonaD());
-			}
-			String terminator=new String("%");
-			output.writeObject(terminator);
+			Zone z=controllerBD.veziRaport(data);
+			output.writeObject(z.getZonaA());
+			output.writeObject(z.getZonaB());
+			output.writeObject(z.getZonaC());
+			//String terminator=new String("%");
+			//output.writeObject(terminator);
 		}catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 	
-	
+	public void trimiteDate() {
+		try {
+			Client c=controllerBD.trimiteDate();
+			String nume=c.getNume();
+			String prenume=c.getPrenume();
+			String username=c.getUsername();
+			String password=c.getPassword();
+			output.writeObject(nume);
+			output.writeObject(prenume);
+			output.writeObject(username);
+			output.writeObject(password);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	public void close() {
 		controllerBD.close();

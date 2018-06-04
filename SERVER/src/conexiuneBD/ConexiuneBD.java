@@ -112,25 +112,22 @@ public class ConexiuneBD {
 		}
 		return false;
 	}
-	public boolean editeazaClient(Client c,Sesiune ses) {
-		try(PreparedStatement ps=con.prepareStatement("UPDATE clienti2 SET username=?, nume=?, password=?, prenume=? WHERE id_client=?")) {
+	public void editeazaClient(Client c,Sesiune ses) {
+		try(PreparedStatement ps=con.prepareStatement("UPDATE clienti2 SET nume=?, password=?, prenume=? WHERE client_id=?")) {
 			int id=ses.getInstance().getId();
-			ps.setInt(5, id);
+			ps.setInt(4, id);
 			String username=c.getUsername();
 			String nume=c.getNume();
 			String prenume=c.getPrenume();
 			String password=c.getPassword();
-			ps.setString(1, username);
-			ps.setString(2, nume);
-			ps.setString(3, password);
-			ps.setString(4, prenume);
+			ps.setString(1, nume);
+			ps.setString(2, password);
+			ps.setString(3, prenume);
 			int rows=ps.executeUpdate();
-			return true;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return false;
 	}	
 	public int locuriLibere(String data) {
 		try (PreparedStatement ps=con.prepareStatement("SELECT sum(nr_persoane) FROM rezervari2 WHERE data=?")){
@@ -200,19 +197,19 @@ public class ConexiuneBD {
 		}
 		return false;
 	}
-	public ArrayList<Zone> veziRaport(String data){
-		try(PreparedStatement ps=con.prepareStatement("SELECT * FROM rezervari WHERE data=?")){
+	public Zone veziRaport(String data){
+		try(PreparedStatement ps=con.prepareStatement("SELECT * FROM rezervari2 WHERE data=?")){
 			DateFormat format=new SimpleDateFormat("yyyy-mm-dd");
 			Date date=format.parse(data);
 			java.sql.Date sql=new java.sql.Date(date.getTime());
 			ps.setDate(1, sql);
-			int zonaA=0,zonaB=0,zonaC=0,zonaD=0;
+			int zonaA=0,zonaB=0,zonaC=0;
 			ResultSet rs=ps.executeQuery();
 			while(rs.next()) {
 				int a=rs.getInt(3);
 				int b=rs.getInt(4);
 				int c=rs.getInt(5);
-				int nrPers=rs.getInt(7);
+				int nrPers=rs.getInt(6);
 				if(b==0 && c==0 && a==1)
 					zonaA+=nrPers;
 				else
@@ -227,10 +224,8 @@ public class ConexiuneBD {
 							zonaC+=nrPers;
 						}
 			}
-			ArrayList<Zone> z=new ArrayList<Zone>();
-			Zone z1=new Zone(zonaA,zonaB,zonaC,zonaD);
-			z.add(z1);
-			return z;
+			Zone z1=new Zone(zonaA,zonaB,zonaC);
+			return z1;
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -261,13 +256,14 @@ public class ConexiuneBD {
 	}
 	public ArrayList<Feedback> veziFeedback(){
 		ArrayList<Feedback> lista=new ArrayList<>();
-		try(PreparedStatement ps=con.prepareStatement("SELECT * FROM feedback");
+		try(PreparedStatement ps=con.prepareStatement("SELECT * FROM feedback2");
 			ResultSet rs=ps.executeQuery()){
 			int idClient=-1;
 			String feed=new String();
 			while(rs.next()) {
 				feed=rs.getString(2);
 				idClient=rs.getInt(3);
+				System.out.println(feed+" "+idClient);
 				lista.add(new Feedback(feed,idClient));
 			}
 			return lista;
@@ -277,6 +273,33 @@ public class ConexiuneBD {
 		}
 		return null;
 	}
+	public Client trimiteDate() {
+		try(PreparedStatement ps=con.prepareStatement("SELECT * FROM clienti2 WHERE client_id=?")){
+			System.out.println("a ajuns la con bd trimiteDate");
+			String nume=null;
+			String prenume=null;
+			String username=null;
+			String password=null;
+			int idC=Sesiune.getInstance().getId();
+			System.out.println(idC);
+			ps.setInt(1, idC);
+			ResultSet rs=ps.executeQuery();
+			while(rs.next()) {
+				System.out.println("a intrat in while");
+				nume=rs.getString("nume");
+				prenume=rs.getString("prenume");
+				username=rs.getString("username");
+				password=rs.getString("password");
+			}
+			Client c=new Client(nume,prenume,username,password);
+			return c;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	public void close() {
 		try {
 			con.close();

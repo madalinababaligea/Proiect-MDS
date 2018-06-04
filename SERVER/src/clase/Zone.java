@@ -4,7 +4,6 @@ public class Zone {
 	private int zonaA;
 	private int zonaB;
 	private int zonaC;
-	private int zonaD;
 	public int getZonaA() {
 		return zonaA;
 	}
@@ -23,17 +22,9 @@ public class Zone {
 	public void setZonaC(int zonaC) {
 		this.zonaC = zonaC;
 	}
-	public int getZonaD() {
-		return zonaD;
-	}
-	public void setZonaD(int zonaD) {
-		this.zonaD = zonaD;
-	}
-	
-	public Zone(int zonaA, int zonaB, int zonaC, int zonaD) {
+	public Zone(int zonaA, int zonaB, int zonaC) {
 		this.zonaA=zonaA;
 		this.zonaB=zonaB;
 		this.zonaC=zonaC;
-		this.zonaA=zonaD;
 	}
 }

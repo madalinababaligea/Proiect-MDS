@@ -27,8 +27,8 @@ public class ControllerBD {
 	public boolean addClient(Client c) {
 		return conexiuneBD.addClient(c);
 	}
-	public boolean editeazaClient(Client c,Sesiune ses) {
-		return conexiuneBD.editeazaClient(c,ses);
+	public void editeazaClient(Client c,Sesiune ses) {
+		conexiuneBD.editeazaClient(c,ses);
 	}
 	public int locuriLibere(String data) {
 		return conexiuneBD.locuriLibere(data);
@@ -42,10 +42,13 @@ public class ControllerBD {
 	public ArrayList<Feedback> veziFeedback() {
 		return conexiuneBD.veziFeedback();
 	}
-	public ArrayList<Zone> veziRaport(String data){
+	public Zone veziRaport(String data){
 		return conexiuneBD.veziRaport(data);
 	}
-
+	public Client trimiteDate() {
+		System.out.print("A intrat in cbd trimite date");
+		return conexiuneBD.trimiteDate();
+	}
 	public void close() {
 		conexiuneBD.close();
 	}
