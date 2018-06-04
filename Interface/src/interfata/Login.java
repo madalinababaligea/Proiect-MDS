@@ -63,7 +63,7 @@ public class Login {
 					if(nr==2)
 					{
 						frame.dispose();
-					//	Manager m= new Manager(control);
+						Manager m= new Manager(control);
 						System.out.println("Manager");
 					}
 					else

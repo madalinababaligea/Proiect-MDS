@@ -1,16 +1,16 @@
 package interfata;
 
-import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+import clase.Utilizator;
 import client.Controller;
-import javax.swing.JButton;
-import java.awt.Font;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
 
 public class Client {
 
@@ -38,6 +38,12 @@ public class Client {
 		frame.getContentPane().add(btnAlegeOferta);
 		
 		JButton btnEditareProfil = new JButton("Editare Profil");
+		btnEditareProfil.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				Utilizator cl= control.TrimiteDate();
+				EditareProfil x=new EditareProfil(control,cl);
+			}
+		});
 		btnEditareProfil.setFont(new Font("Tahoma", Font.PLAIN, 18));
 		btnEditareProfil.setBounds(237, 72, 149, 58);
 		frame.getContentPane().add(btnEditareProfil);

@@ -62,7 +62,7 @@ public class AlegeOferta {
 			String[] values = new String[] {"Zona A", "", "Zona B", "", "Zona C"};
 			public int getSize() {
 				return values.length;
-			}
+				}
 			public Object getElementAt(int index) {
 				return values[index];
 			}
